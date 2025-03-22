@@ -103,6 +103,7 @@ You must put the API address in this line before trying to run locally. Save thi
 I used expo to develop this app, so I used this command to run.
 
 ```bash
+npm install
 npx expo start
 ```
 
