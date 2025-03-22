@@ -4,7 +4,6 @@ from fastapi.responses import FileResponse, HTMLResponse
 import cv2
 import numpy as np
 import os
-from inference_sdk import InferenceHTTPClient
 import subprocess
 
 app = FastAPI()
