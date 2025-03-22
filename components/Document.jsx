@@ -16,7 +16,7 @@ export default function Document () {
     useEffect(() => {
         const fetchLocalIP = async () => {
             const ip = await Network.getIpAddressAsync();
-            setAPI_URL(`http://192.168.1.114:8000`);
+            setAPI_URL(`http://<Your IP Address Here>:8000`);
         };
         fetchLocalIP();
     }, []);
