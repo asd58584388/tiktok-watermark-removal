@@ -27,11 +27,11 @@ cd tiktok-watermark-removal
 
 The backend uses FastAPI and FFmpeg to process videos.
 
-Install dependencies for the backend:
+Install dependencies for the backend. I chose Python 3.9 because the model I was initially going to use required the `ultralytics` package, which is not supported by python 3.10+.
 
 ```bash
 cd backend
-python3 -m venv .venv
+python3.9 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -179,7 +179,7 @@ Response:
 
 ## Why These Choices Were Made
 
-### **Why I Chose Expo for the Frontend**
+#### **Why I Chose Expo for the Frontend**
 
 As this is my first mobile app development project, I wanted to choose a framework that would allow me to build the app quickly and with less complexity. I decided to use Expo for:
 _ Ease of use
@@ -189,11 +189,26 @@ _ Documentation Focus on React Native
 
 By using Expo, I was able to quickly create a functioning mobile app without getting bogged down by the complexities of native mobile development. It helped me focus on the core features of the app, and I was able to learn and experiment with mobile app development efficiently.
 
+#### Why ORB for Watermark Detection?
+
+- Efficiency: ORB is a fast and efficient feature matching algorithm that works well for detecting fixed watermarks, like the TikTok logo, in videos.
+- OpenCV Integration: ORB is natively supported by OpenCV, which is already being used for video processing in the project.
+
+#### Why FFmpeg for Audio Extraction and Video Merging?
+
+- Industry Standard: FFmpeg is widely used for video and audio processing due to its flexibility and powerful feature set.
+- Ease of Integration: FFmpeg is simple to integrate into Python projects using either subprocess or the ffmpeg-python wrapper. It handles the audio extraction and merging seamlessly.
+
+#### Why React Native for the Frontend?
+
+- Cross-Platform: React Native allows for building apps that can run on both iOS and Android using the same codebase, which helps in quickly reaching a wider audience.
+- Community Support: React Native has a large community, meaning it is easier to find support and resources for building the frontend.
+
 ---
 
-## **About My Experience as a Beginner**
+## **About This Experience**
 
-As a beginner, this is my first mobile app. I wanted to learn how to build an app that interacts with a backend server and allows users to upload, process, and download videos. Expo and React Native gave me the tools to accomplish this, and while it came with challenges, it has been a great learning experience. I am excited to continue improving my skills and creating more sophisticated mobile apps in the future.
+This is my first mobile app. I wanted to learn how to build an app that interacts with a backend server and allows users to upload, process, and download videos. Expo and React Native gave me the tools to accomplish this, and while it came with challenges, it has been a great learning experience. I am excited to continue improving my skills and creating more sophisticated mobile apps in the future.
 
 1. Why FastAPI for the Backend?
 
