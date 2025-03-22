@@ -239,12 +239,12 @@ While the current version of the TikTok watermark removal project effectively de
 
 - **Current Method**: The project currently uses **ORB feature matching** to detect TikTok watermarks. While this method works for many cases, it may struggle with videos that have significant noise, scaling, or rotation in the watermark position.
 
-- **Improvement**: One of the major improvements I plan to implement is switching to a **YOLO (You Only Look Once) model**, such as **YOLOv4**, for watermark detection. YOLO is a real-time object detection model that can perform better in various conditions such as:
+- **Improvement**: One of the major improvements I plan to implement is switching to a **YOLO (You Only Look Once) model**, such as **YOLO11**, for watermark detection. YOLO is a real-time object detection model that can perform better in various conditions such as:
 
   - **Robustness to Scaling**: YOLO can detect objects (like a watermark) at different scales and sizes, which is important as TikTok watermarks can appear in various locations and sizes across different videos.
   - **Speed and Accuracy**: YOLO is well-known for being fast while maintaining high accuracy, making it a great choice for real-time watermark detection in videos.
 
-- **Implementation**: I will train a YOLOv4 model specifically for watermark detection, or alternatively, use a pre-trained model fine-tuned for this task. Once implemented, YOLO will be used to detect the watermark in each frame, and the detection results will be used to blur the watermark region in the video.
+- **Implementation**: I will train a YOLO11 model specifically for watermark detection, or alternatively, use a pre-trained model fine-tuned for this task. Once implemented, YOLO will be used to detect the watermark in each frame, and the detection results will be used to blur the watermark region in the video.
 
 - **Benefits**:
   - Increased accuracy in detecting watermarks.
@@ -257,7 +257,6 @@ While the current version of the TikTok watermark removal project effectively de
 
 - **Improvement 1 - CORS and Authentication**: To make the API more accessible for different clients, I plan to:
 
-  - **Implement Authentication**: Adding basic **API key authentication** or OAuth to restrict access and ensure that only authorized users can upload and process videos.
   - **Handle CORS Better**: Allow more configurable cross-origin resource sharing (CORS) to ensure that the API can be used seamlessly with a variety of clients (e.g., mobile, web apps) across different domains.
 
 - **Improvement 2 - Asynchronous Video Processing**: While FastAPI already supports asynchronous tasks, video processing tasks can still be time-consuming, especially with high-resolution videos. To address this:
@@ -265,19 +264,14 @@ While the current version of the TikTok watermark removal project effectively de
   - **Queue-based System**: Implement a task queue (e.g., **Celery** with **Redis** or **RabbitMQ**) to handle video processing asynchronously. This will help improve the API’s responsiveness by processing videos in the background and notifying users when their video is ready.
   - **Real-time Progress Tracking**: Implement real-time tracking for the video processing task, allowing users to track the status of their video in real-time, reducing wait time anxiety and improving user experience.
 
-- **Improvement 3 - API Rate Limiting**: Introduce **rate-limiting** for the API to prevent abuse and ensure fair usage, especially when scaling the API for public use.
-
-- **Improvement 4 - Cloud Hosting**: For scalability, I plan to host the API on a cloud service like **AWS**, **Google Cloud**, or **Azure**. This will allow the system to scale dynamically depending on demand, handle large file uploads, and serve users from multiple regions.
-
-- **Improvement 5 - Documentation and SDK**: To make the API more user-friendly and easier to integrate with other platforms, I plan to:
-  - **Generate Comprehensive API Docs**: Use **Swagger** (which FastAPI already supports) to generate detailed API documentation, including usage examples, request/response formats, and authentication methods.
+- **Improvement 3 - Documentation and SDK**: To make the API more user-friendly and easier to integrate with other platforms, I plan to:
   - **SDK Development**: Create SDKs (software development kits) in multiple languages (e.g., Python, JavaScript) that allow developers to easily interact with the API without having to manually make HTTP requests.
 
 ---
 
 ### **Benefits of These Improvements**
 
-- **Better Detection Accuracy**: Switching to a YOLOv4-based detection model will result in more accurate watermark detection, especially in challenging video conditions.
+- **Better Detection Accuracy**: Switching to a YOLO11-based detection model will result in more accurate watermark detection, especially in challenging video conditions.
 - **Enhanced API Scalability**: The improvements in API infrastructure (asynchronous processing, authentication, and scaling) will allow the project to handle a larger user base and provide a more reliable service.
 - **Increased Flexibility and Usability**: By improving API accessibility and adding user-friendly features like real-time progress tracking, the system will be easier to use and integrate with other services.
 - **Better Cloud Integration**: Hosting the API on the cloud will improve performance, scalability, and redundancy, ensuring that the service can handle more requests and provide faster video processing.
