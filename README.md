@@ -2,6 +2,8 @@
 
 A full-stack application that detects and removes TikTok watermarks from videos using a fine-tuned YOLOv7 model.
 
+[Watch the demo video](./demo.mp4)
+
 
 ## Project Structure
 
@@ -128,7 +130,6 @@ The application uses a YOLOv7 model fine-tuned specifically for TikTok watermark
 
 ### Model Improvements
    - While YOLOv7 provides good results for watermark detection in most cases, it's not perfect
-
 
 ## Acknowledgments
 
