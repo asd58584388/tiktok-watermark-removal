@@ -1,289 +1,141 @@
-# **TikTok Watermark Removal Project**
+# TikTok Watermark Remover
 
-This project provides a solution to remove TikTok watermarks from videos by detecting and blurring the watermark. It utilizes computer vision techniques and FFmpeg for audio extraction and video processing. The project includes a FastAPI backend for video processing, along with a React Native frontend to interact with the backend.
+A full-stack application that detects and removes TikTok watermarks from videos using a fine-tuned YOLOv7 model.
 
----
 
-## **Features**
+## Project Structure
 
-- **Watermark Detection**: Detects TikTok watermark in video frames using ORB (Oriented FAST and Rotated BRIEF) feature matching.
-- **Watermark Removal**: Once detected, the watermark is blurred using Gaussian blur.
-- **Audio Extraction**: Extracts audio from the video and combines it with the processed video.
-- **FastAPI Backend**: A RESTful API built with FastAPI to upload and process videos.
-- **React Native Frontend**: A simple mobile interface for uploading videos and receiving processed output.
+The project consists of two main components:
 
----
+- **Frontend**: A mobile app built with Expo and React Native
+- **Backend**: A FastAPI server with a YOLOv7 model fine-tuned for TikTok watermark detection and removal
 
-## **Installation**
+## Features
 
-### 1. **Clone the Repository**
+- Upload TikTok videos directly from your device
+- Automatic watermark detection using a fine-tuned YOLOv7 model
+- Watermark removal while preserving video quality
+- Cross-platform support via Expo (iOS, Android, Web)
+- Simple and intuitive user interface
 
-```bash
-git clone https://github.com/your-username/tiktok-watermark-removal.git
-cd tiktok-watermark-removal
-```
+## Technology Stack
 
-### 2. Set Up Backend (FastAPI)
+### Frontend
+- [Expo](https://expo.dev/) - React Native framework
+- React Native - Mobile app development
+- TypeScript - Type-safe JavaScript
+- Axios - API communication
 
-The backend uses FastAPI and FFmpeg to process videos.
+### Backend
+- [FastAPI](https://fastapi.tiangolo.com/) - High-performance API framework
+- YOLOv7 - Computer vision model (fine-tuned for TikTok watermark detection)
+- OpenCV - Image and video processing
+- ONNX Runtime - Efficient model inference
+- Python - Backend programming
 
-Install dependencies for the backend. I chose Python 3.9 because the model I was initially going to use required the `ultralytics` package, which is not supported by python 3.10+.
+## Getting Started
 
-```bash
-cd backend
-python3.9 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+### Prerequisites
 
-In order for the app to be able to find and access the API, I used my IP address as the host on port 8000. Here is the command I ran.
+- Node.js
+- Python 3.12+
+- Anaconda or Miniconda
+- Git
 
-```bash
-uvicorn main:app --reload --host $(ipconfig getifaddr en0) --port 8000
-```
+### Backend Setup
 
-#### FFmpeg Installation:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/asd58584388/tiktok-watermark-removal.git
+   cd tiktok-watermark-removal/backend
+   ```
 
-Ensure that FFmpeg is installed on your system. Follow the instructions for your platform:
+2. Create a Conda environment and install dependencies:
+   ```bash
+   conda create -n tiktok-watermark python=3.12
+   conda activate tiktok-watermark
+   pip install -r requirements.txt
+   ```
 
-**Using Homebrew**
+3. Start the FastAPI server:
+   ```bash
+   python start_server.py
+   ```
+   The server will run on http://localhost:8000 by default.
 
-```bash
-brew install ffmpeg
-```
+### Frontend Setup
 
-**Ubuntu/Linux**
+1. Navigate to the frontend directory:
+   ```bash
+   cd ../frontend
+   ```
 
-```bash
-sudo apt update && sudo apt install ffmpeg
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-**Windows**
+3. Configure the API URL:
+   - Open `frontend/components/Document.jsx`
+   - **IMPORTANT**: Update the `API_URL` in the `fetchLocalIP` function with your server's IP address:
+     ```javascript
+     // Change this:
+     setAPI_URL(`http://192.168.50.77:8000`);
+     // To your actual backend server IP address and port
+     setAPI_URL(`http://YOUR_SERVER_IP:8000`);
+     ```
+   - If testing on the same device, you can use `localhost` or `127.0.0.1`
+   - For mobile devices on the same network, use your computer's local IP address
 
-1. Download FFmpeg from ffmpeg.org.
-2. Add the `bin` folder of FFmpeg to your system `PATH`.
+4. Start the Expo development server:
+   ```bash
+   npm start
+   ```
 
-Run the FastAPI server:
-
-```bash
-uvicorn main:app --reload --host $(ipconfig getifaddr en0) --port 8000
-```
-
-Get the output for the host (your IP), we will need this for later.
-
-The backend should now be running at http://<your IP address>:8000.
-
-### 3. Set Up Frontend (React Native)
-
-The frontend is a mobile app built with React Native.
-
-Install dependencies for the frontend:
-
-```bash
-cd frontend
-npm install
-```
-
-### Accessing the API
-
-Navigate to the `Document.jsx` component under `components`, find line 16.
-
-```javascript
-useEffect(() => {
-  const fetchLocalIP = async () => {
-    const ip = await Network.getIpAddressAsync();
-    setAPI_URL(`http://<put your IP address here>:8000`);
-  };
-  fetchLocalIP();
-}, []);
-```
-
-You must put the API address in this line before trying to run locally. Save this change, then proceed (I will fix this later).
-
-I used expo to develop this app, so I used this command to run.
-
-```bash
-npm install
-npx expo start
-```
-
-You should now be able to open the app on a simulator or device.
-
-[React Native offical documentation](https://reactnative.dev/docs/getting-started)
-
----
+5. Use the Expo Go app on your mobile device to scan the QR code, or run on an emulator/simulator.
 
 ## Usage
 
-### 1. Upload a Video
+1. Open the app on your device
+2. Tap "Upload MP4" to select a TikTok video from your device
+3. Tap "Detect Watermark" to process the video
+4. If a watermark is detected, a download button will appear
+5. Tap "Download" to save the processed video without watermarks
 
-    Open the React Native app.
-    Tap on Upload MP4 to select a TikTok video with a watermark.
-    The app will upload the video to the backend for processing.
+## How It Works
 
-### 2. Detect Watermark and Process Video
+The application uses a YOLOv7 model fine-tuned specifically for TikTok watermark detection. When a video is uploaded:
 
-    After uploading, the backend will process the video:
-        It will detect the watermark.
-        If the watermark is found, it will blur the watermark area.
-        The audio from the video will be extracted and combined with the processed video.
+1. The backend samples frames from the video
+2. The model identifies any TikTok watermarks in these frames
+3. If watermarks are detected, they are removed using advanced inpainting techniques
+4. The processed video is made available for download
 
-### 3. Download the Processed Video
+## Limitations
 
-    Once the video is processed, the app will display a Download Video button.
-    Tap the button to download the processed video without the watermark.
+- The YOLOv7 model is specifically trained on TikTok logo watermarks and may not perform well with:
+  - Text-heavy watermarks
+  - Custom text overlays
+  - Non-standard watermark placements
+  - Watermarks from other platforms
 
----
 
-## API Endpoints
+## Future Improvements
 
-### 1. `POST /upload/`
+### Processing Speed Enhancement**
+   - Implement CUDA support for GPU acceleration
+   - Optimize video I/O operations
 
-Upload a video to be processed.
+### Model Improvements
+   - While YOLOv7 provides good results for watermark detection in most cases, it's not perfect
 
-Request:
+## License
 
-`file`: The video file to be uploaded (MP4 format).
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Response:
+## Acknowledgments
 
-```json
-{
-  "filename": "your-video.mp4",
-  "watermark": true,
-  "download_url": "/download/processed_your-video.mp4"
-}
-```
-
-### 2. `GET /download/{filename}`
-
-Download the processed video after watermark removal.
-
-Response:
-
-    The processed video file.
-
----
-
-## Assumptions
-
-1. Video Format:
-   The project assumes that the video format is MP4, as this is a common format for TikTok videos and ensures compatibility with FFmpeg and OpenCV for processing.
-
-2. Video Quality:
-   The effectiveness of watermark detection depends on the video quality. Videos with very low resolution or extremely high compression may not detect the watermark as reliably.
-
-3. No Interactive Editing:
-   The user can upload videos to the system, but they cannot manually interact with or select specific frames of the video for watermark removal. The process is fully automated.
-
----
-
-## Why These Choices Were Made
-
-#### **Why I Chose Expo for the Frontend**
-
-As this is my first mobile app development project, I wanted to choose a framework that would allow me to build the app quickly and with less complexity. I decided to use Expo for:
-_ Ease of use
-_ Quick development and testing
-_ Cross-platform compatibility
-_ Documentation Focus on React Native
-
-By using Expo, I was able to quickly create a functioning mobile app without getting bogged down by the complexities of native mobile development. It helped me focus on the core features of the app, and I was able to learn and experiment with mobile app development efficiently.
-
-#### Why ORB for Watermark Detection?
-
-- Efficiency: ORB is a fast and efficient feature matching algorithm that works well for detecting fixed watermarks, like the TikTok logo, in videos.
-- OpenCV Integration: ORB is natively supported by OpenCV, which is already being used for video processing in the project.
-
-#### Why FFmpeg for Audio Extraction and Video Merging?
-
-- Industry Standard: FFmpeg is widely used for video and audio processing due to its flexibility and powerful feature set.
-- Ease of Integration: FFmpeg is simple to integrate into Python projects using either subprocess or the ffmpeg-python wrapper. It handles the audio extraction and merging seamlessly.
-
-#### Why React Native for the Frontend?
-
-- Cross-Platform: React Native allows for building apps that can run on both iOS and Android using the same codebase, which helps in quickly reaching a wider audience.
-- Community Support: React Native has a large community, meaning it is easier to find support and resources for building the frontend.
-
----
-
-## **About This Experience**
-
-This is my first mobile app. I wanted to learn how to build an app that interacts with a backend server and allows users to upload, process, and download videos. Expo and React Native gave me the tools to accomplish this, and while it came with challenges, it has been a great learning experience. I am excited to continue improving my skills and creating more sophisticated mobile apps in the future.
-
-1. Why FastAPI for the Backend?
-
-   - Performance: FastAPI offers high performance for building APIs, which is essential for handling video processing requests efficiently.
-   - Async Support: FastAPI allows asynchronous request handling, which improves the response time for large video file uploads and processing.
-
-2. Why ORB for Watermark Detection?
-
-   - Efficiency: ORB is a fast and efficient feature matching algorithm that works well for detecting fixed watermarks, like the TikTok logo, in videos.
-   - OpenCV Integration: ORB is natively supported by OpenCV, which is already being used for video processing in the project.
-
-3. Why FFmpeg for Audio Extraction and Video Merging?
-
-   - Industry Standard: FFmpeg is widely used for video and audio processing due to its flexibility and powerful feature set.
-   - Ease of Integration: FFmpeg is simple to integrate into Python projects using either subprocess or the ffmpeg-python wrapper. It handles the audio extraction and merging seamlessly.
-
-4. Why React Native for the Frontend?
-   - Cross-Platform: React Native allows for building apps that can run on both iOS and Android using the same codebase, which helps in quickly reaching a wider audience.
-   - Community Support: React Native has a large community, meaning it is easier to find support and resources for building the frontend.
-
----
-
-## **Future Improvements**
-
-While the current version of the TikTok watermark removal project effectively detects and removes watermarks using ORB feature matching and Gaussian blur, there are several improvements that could make the system more robust and scalable:
-
-### 1. **Switching to YOLO for Watermark Detection**
-
-- **Current Method**: The project currently uses **ORB feature matching** to detect TikTok watermarks. While this method works for many cases, it may struggle with videos that have significant noise, scaling, or rotation in the watermark position.
-
-- **Improvement**: One of the major improvements I plan to implement is switching to a **YOLO (You Only Look Once) model**, such as **YOLO11**, for watermark detection. YOLO is a real-time object detection model that can perform better in various conditions such as:
-
-  - **Robustness to Scaling**: YOLO can detect objects (like a watermark) at different scales and sizes, which is important as TikTok watermarks can appear in various locations and sizes across different videos.
-  - **Speed and Accuracy**: YOLO is well-known for being fast while maintaining high accuracy, making it a great choice for real-time watermark detection in videos.
-
-- **Implementation**: I will train a YOLO11 model specifically for watermark detection, or alternatively, use a pre-trained model fine-tuned for this task. Once implemented, YOLO will be used to detect the watermark in each frame, and the detection results will be used to blur the watermark region in the video.
-
-- **Benefits**:
-  - Increased accuracy in detecting watermarks.
-  - Better handling of dynamic changes in video content.
-  - Reduced reliance on feature matching techniques that may fail under certain conditions.
-
-### 2. **Making the API More Accessible and Scalable**
-
-- **Current API Setup**: The current API is built using **FastAPI**, and it provides a straightforward mechanism for uploading and processing videos. However, the API could be more accessible and scalable for production use.
-
-- **Improvement 1 - CORS and Authentication**: To make the API more accessible for different clients, I plan to:
-
-  - **Handle CORS Better**: Allow more configurable cross-origin resource sharing (CORS) to ensure that the API can be used seamlessly with a variety of clients (e.g., mobile, web apps) across different domains.
-
-- **Improvement 2 - Asynchronous Video Processing**: While FastAPI already supports asynchronous tasks, video processing tasks can still be time-consuming, especially with high-resolution videos. To address this:
-
-  - **Queue-based System**: Implement a task queue (e.g., **Celery** with **Redis** or **RabbitMQ**) to handle video processing asynchronously. This will help improve the API’s responsiveness by processing videos in the background and notifying users when their video is ready.
-  - **Real-time Progress Tracking**: Implement real-time tracking for the video processing task, allowing users to track the status of their video in real-time, reducing wait time anxiety and improving user experience.
-
-- **Improvement 3 - Documentation and SDK**: To make the API more user-friendly and easier to integrate with other platforms, I plan to:
-  - **SDK Development**: Create SDKs (software development kits) in multiple languages (e.g., Python, JavaScript) that allow developers to easily interact with the API without having to manually make HTTP requests.
-
----
-
-### **Benefits of These Improvements**
-
-- **Better Detection Accuracy**: Switching to a YOLO11-based detection model will result in more accurate watermark detection, especially in challenging video conditions.
-- **Enhanced API Scalability**: The improvements in API infrastructure (asynchronous processing, authentication, and scaling) will allow the project to handle a larger user base and provide a more reliable service.
-- **Increased Flexibility and Usability**: By improving API accessibility and adding user-friendly features like real-time progress tracking, the system will be easier to use and integrate with other services.
-- **Better Cloud Integration**: Hosting the API on the cloud will improve performance, scalability, and redundancy, ensuring that the service can handle more requests and provide faster video processing.
-
----
-
-## Technologies Used
-
-    FastAPI: For the backend server to process videos.
-    OpenCV: For watermark detection using ORB feature matching.
-    FFmpeg: For audio extraction and video merging.
-    React Native: For the mobile frontend.
-    Python: Backend language.
-    JavaScript: Frontend language.
+- The YOLOv7 team for their excellent object detection model
+- The FastAPI and Expo communities for their comprehensive documentation
+- [Connor Holm's TikTok Watermark YOLOv7](https://github.com/connorholm/tiktok-watermark-yolov7/tree/main/yolov7) for the initial YOLOv7 watermark detection implementation
+- [Bridget Bangert's TikTok Watermark Removal](https://github.com/bridgetbangert/tiktok-watermark-removal) for frontend design
