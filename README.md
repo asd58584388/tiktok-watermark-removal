@@ -130,7 +130,7 @@ The application uses a YOLOv7 model fine-tuned specifically for TikTok watermark
 
 1. The backend samples frames from the video
 2. The model identifies any TikTok watermarks in these frames
-3. If watermarks are detected, they are removed using advanced inpainting techniques
+3. If watermarks are detected, they are removed using opencv inpainting
 4. The processed video is made available for download
 
 ## Limitations
