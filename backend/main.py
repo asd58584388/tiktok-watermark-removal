@@ -6,6 +6,8 @@ import numpy as np
 import os
 import subprocess
 
+from watermark_removal import detect_watermark, preprocess_image, remove_watermark
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -45,16 +47,17 @@ async def upload_video(file: UploadFile = File(...)):
                     print(f"Error deleting file {file_path}: {e}")
 
     try:
-        file_path = f"{UPLOAD_DIR}/{file.filename}"
+        file_path = f"{UPLOAD_DIR}\{file.filename}"
         with open(file_path, "wb") as buffer:
             for chunk in iter(lambda: file.file.read(4096), b""):
                 buffer.write(chunk)
 
         detected = detect_watermark(file_path)
+        print("Watermark detected: ", detected)
         if detected:
             output_path = os.path.join(OUTPUT_DIR, f"processed_{file.filename}")
-            process_video(f"{UPLOAD_DIR}/{file.filename}", output_path)
-
+            process_video(f"{UPLOAD_DIR}\{file.filename}", output_path)
+            print("Video processed")
             return {
                 "filename": file.filename,
                 "watermark": detected,
@@ -137,7 +140,6 @@ def serve_processed_video(filename: str):
         return {"error": "File not found"}
     
 
-def detect_watermark(video_path, template_path="tiktok-icon2.png", min_matches=5):
     print("Detecting watermark")
 
     template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
@@ -187,11 +189,6 @@ def process_video(video_path, output_path, template_path="tiktok-icon2.png"):
     OUTPUT_DIR = os.path.dirname(output_path)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
-    orb = cv2.ORB_create()
-
-    keypoints_template, descriptors_template = orb.detectAndCompute(template, None)
-
     cap = cv2.VideoCapture(video_path)
     frame_width, frame_height = int(cap.get(3)), int(cap.get(4))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
@@ -228,72 +225,9 @@ def process_video(video_path, output_path, template_path="tiktok-icon2.png"):
         if not ret:
             break
 
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        preprocessed_frame = remove_watermark(frame)
 
-        region_width = frame_width // 8
-        left_frame = gray_frame[:, :region_width]
-        right_frame = gray_frame[:, -region_width:]
-
-        keypoints_left, descriptors_left = orb.detectAndCompute(left_frame, None)
-        keypoints_right, descriptors_right = orb.detectAndCompute(right_frame, None)
-
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-        current_box = None
-
-        if descriptors_left is not None and descriptors_template is not None:
-            matches_left = bf.match(descriptors_template, descriptors_left)
-            matches_left = sorted(matches_left, key=lambda x: x.distance)
-
-            if len(matches_left) > MIN_MATCHES:
-                print("TikTok watermark detected in the **left** side!")
-
-                pts_left = np.float32([keypoints_left[m.trainIdx].pt for m in matches_left]).reshape(-1, 1, 2)
-
-                if len(pts_left) > 4:
-                    x_left, y_left, w_left, h_left = cv2.boundingRect(pts_left)
-
-                    w_left = max(w_left, MIN_WIDTH)
-                    h_left = max(h_left, MIN_HEIGHT)
-
-                    x_left = max(0, min(x_left, region_width - MIN_WIDTH))
-
-                    current_box = (x_left, y_left, w_left, h_left)
-
-        if descriptors_right is not None and descriptors_template is not None:
-            matches_right = bf.match(descriptors_template, descriptors_right)
-            matches_right = sorted(matches_right, key=lambda x: x.distance)
-
-            if len(matches_right) > MIN_MATCHES:
-                print("TikTok watermark detected in the **right** side!")
-
-                pts_right = np.float32([keypoints_right[m.trainIdx].pt for m in matches_right]).reshape(-1, 1, 2)
-
-                if len(pts_right) > 4:
-                    x_right, y_right, w_right, h_right = cv2.boundingRect(pts_right)
-
-                    w_right = max(w_right, MIN_WIDTH)
-                    h_right = max(h_right, MIN_HEIGHT)
-
-                    x_right = frame_width - region_width + x_right  
-
-                    current_box = (x_right, y_right, w_right, h_right)
-
-        if current_box is not None:
-            prev_box = current_box
-            prev_box_found = True
-            prev_frame_count = 0  
-        else:
-            prev_frame_count += 1
-            if prev_frame_count > MAX_NO_DETECTION_FRAMES:
-                prev_box_found = False  
-
-        if prev_box_found and prev_box is not None:
-            x, y, w, h = prev_box
-            roi = frame[y:y+h, x:x+w]
-            blurred_roi = cv2.GaussianBlur(roi, (99, 99), 30)
-            frame[y:y+h, x:x+w] = blurred_roi
-
-        out.write(frame)
+        out.write(preprocessed_frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
