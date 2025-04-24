@@ -4,13 +4,33 @@ A full-stack application that detects and removes TikTok watermarks from videos 
 
 [Watch the demo video](./demo.mp4)
 
-
 ## Project Structure
 
 The project consists of two main components:
 
 - **Frontend**: A mobile app built with Expo and React Native
 - **Backend**: A FastAPI server with a YOLOv7 model fine-tuned for TikTok watermark detection and removal
+
+## Technology Decisions
+
+### Model Selection
+After evaluating multiple models, YOLOv7 was chosen as the optimal solution for several reasons:
+- Good detection accuracy.
+- Pre-trained models available, eliminating the need for additional dataset collection and training
+
+### Frontend Architecture
+Expo and React Native were selected for the following reasons:
+- Cross-platform development (iOS, Android, Web) from a single codebase
+- Expo's comprehensive development tools and simplified workflow
+- Rich ecosystem of libraries for media handling
+- Fast development cycle with hot reloading
+
+### Backend Architecture
+FastAPI was chosen as the backend framework for several advantages:
+- High performance with async support
+- Lightweight and minimal boilerplate code
+- Most AI liberaries use python.
+
 
 ## Features
 
