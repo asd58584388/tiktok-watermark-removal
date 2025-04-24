@@ -131,7 +131,7 @@ The application uses a YOLOv7 model fine-tuned specifically for TikTok watermark
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License
 
 ## Acknowledgments
 
