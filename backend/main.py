@@ -183,7 +183,7 @@ def serve_processed_video(filename: str):
     cap.release()
     return watermark_detected
 
-def process_video(video_path, output_path, template_path="tiktok-icon2.png"):
+def process_video(video_path, output_path):
     print("Processing video")
     
     OUTPUT_DIR = os.path.dirname(output_path)

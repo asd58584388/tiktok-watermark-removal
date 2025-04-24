@@ -176,7 +176,6 @@ def remove_watermark(frame, model_path="yolov7_tiktok_watermark.onnx", conf_thre
     # Run inference
     # print("Detecting watermarks...")
     outputs = session.run(['output'], {'input': input_tensor})
-    print(outputs);
     output = outputs[0]
     
     # Process output to get detections
