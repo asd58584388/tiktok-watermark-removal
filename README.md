@@ -129,9 +129,6 @@ The application uses a YOLOv7 model fine-tuned specifically for TikTok watermark
 ### Model Improvements
    - While YOLOv7 provides good results for watermark detection in most cases, it's not perfect
 
-## License
-
-This project is licensed under the MIT License
 
 ## Acknowledgments
 
