@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 import cv2
@@ -29,6 +29,9 @@ async def root():
 
 @app.post("/upload/")
 async def upload_video(file: UploadFile = File(...)):
+
+    # logger.info(f"Uploading video: {file.filename}")
+
     if os.path.exists(OUTPUT_DIR):
         print("Output directory exists.")
         for filename in os.listdir(OUTPUT_DIR):

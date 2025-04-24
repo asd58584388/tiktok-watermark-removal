@@ -16,7 +16,7 @@ export default function Document () {
     useEffect(() => {
         const fetchLocalIP = async () => {
             const ip = await Network.getIpAddressAsync();
-            setAPI_URL(`http://192.168.1.114:8000`);
+            setAPI_URL(`http://192.168.50.77:8000`);
         };
         fetchLocalIP();
     }, []);
@@ -52,13 +52,11 @@ export default function Document () {
             name: video.name,
         });
 
-        setProcessingStatus('Watermark detected. Processing...');
+        // setProcessingStatus('Watermark detected. Processing...');
 
         try {
             console.log("Uploading content.")
-            const response = await axios.post(API_URL + '/upload/', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            const response = await axios.post(API_URL + '/upload/', formData)
 
             setResult(response.data);
             console.log("Response data:", response)
